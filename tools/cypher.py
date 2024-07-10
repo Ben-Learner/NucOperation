@@ -52,6 +52,15 @@ Cypher查询:
 MATCH (f:Fault {{name: '1号堆蒸汽发生器传热管泄漏'}})-[r:HAS_PARAMETER]->(param:Parameter)
 RETURN param.name AS Parameter, r.phenomenon AS Phenomenon;
 
+如果查询的是现象可能是什么故障，可以参考以下例子：
+
+问题：
+'给水流量异常可能是什么故障'
+
+Cypher查询:
+MATCH (p:Parameter{{name: '给水流量'}})<-[:HAS_PARAMETER]-(f:Fault)
+RETURN f.name AS Fault;
+
 模式：
 {schema}
 
