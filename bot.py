@@ -4,7 +4,7 @@ from llm import llm
 from agent import generate_response
 
 # Page Config
-st.set_page_config("Ebert", page_icon=":movie_camera:")
+st.set_page_config("Ben", page_icon=":movie_camera:")
 
 # Set up Session State
 # if "messages" not in st.session_state:
@@ -14,7 +14,7 @@ st.set_page_config("Ebert", page_icon=":movie_camera:")
 
 if "messages" not in st.session_state:
     st.session_state.messages = [
-        {"role": "assistant", "content": "你好，我是 NucOperation 聊天机器人！ 有什么可以帮您？"},
+        {"role": "assistant", "content": "你好，我是HTR-PM运行辅助智能体！ 有什么可以帮您？"},
     ]
 
 # Submit handler
