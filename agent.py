@@ -9,8 +9,9 @@ from langchain.agents import AgentExecutor, create_react_agent
 from langchain_core.runnables.history import RunnableWithMessageHistory
 from langchain import hub
 from utils import get_session_id
-# from tools.vector import get_movie_plot
+from tools.vector import get_fault_info
 from tools.cypher import cypher_qa
+from neo4j.exceptions import CypherSyntaxError, ServiceUnavailable
 
 # Create a movie chat chain
 # chat_prompt = ChatPromptTemplate.from_messages(
@@ -22,7 +23,7 @@ from tools.cypher import cypher_qa
 
 chat_prompt = ChatPromptTemplate.from_messages(
     [
-        ("system", "您是一名核电厂操作专家，负责提供有关事故响应的信息。"),
+        ("system", "您是一名核电厂操作专家，负责提供有关异常响应的信息。"),
         ("human", "{input}"),
     ]
 )
@@ -55,14 +56,14 @@ tools = [
     #     description="用于其他工具未涵盖的一般核电厂聊天",
     #     func=plant_chat.invoke,
     # ),
-    # Tool.from_function(
-    #     name="Movie Plot Search",  
-    #     description="For when you need to find information about movies based on a plot",
-    #     func=get_movie_plot, 
-    # ),
+    Tool.from_function(
+        name="fault info Search",  
+        description="""When the 'Incident response information' tool cannot find information about a fault phenomenon, use this tool to search for fault-related information""",
+        func=get_fault_info, 
+    ),
     Tool.from_function(
         name="Incident response information",
-        description="使用Cypher提供有关事件响应问题的信息",
+        description="使用Cypher提供有关异常响应问题的信息",
         func = cypher_qa
     )
 ]
@@ -116,9 +117,9 @@ def get_memory(session_id):
 # """)
 
 agent_prompt = PromptTemplate.from_template("""
-你是一位核电站运行专家，提供关于事故响应的信息。
+你是一位核电站运行专家，提供关于异常响应的信息。
 尽可能提供帮助并返回尽可能多的信息。
-不要回答任何与事故响应无关的问题。
+不要回答任何与异常响应无关的问题。
 
 不要使用你预先训练的知识回答任何问题，只使用上下文中提供的信息,并且使用中文。
 
@@ -177,12 +178,25 @@ def generate_response(user_input):
     Create a handler that calls the Conversational agent
     and returns a response to be rendered in the UI
     """
-    response = chat_agent.invoke(
-        {"input":user_input},
-        {"configurable": {"session_id": get_session_id()}},
-    )
+    try:
+        response = chat_agent.invoke(
+            {"input":user_input},
+            {"configurable": {"session_id": get_session_id()}},
+        )
 
-    return response['output']
+        return response['output']
+    except (CypherSyntaxError, ServiceUnavailable) as e:
+        # Log the error and try the alternative tool
+        st.error(f"Incident response information tool failed with error: {str(e)}")
+        st.warning("Falling back to Fault Info Search tool.")
+
+        try:
+            # Manually invoke the Fault Info Search tool as a fallback
+            fallback_tool = next(tool for tool in tools if tool.name == "Fault Info Search")
+            return fallback_tool.func(user_input)
+        except Exception as fallback_error:
+            st.error(f"Fallback tool also failed: {str(fallback_error)}")
+            return "抱歉，处理请求时发生了错误，所有工具均未能成功响应。"
 
 # user_input = "你是谁？"
 # response = generate_response(user_input)

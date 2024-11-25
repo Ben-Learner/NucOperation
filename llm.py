@@ -23,5 +23,6 @@ from langchain_openai import OpenAIEmbeddings
 
 embeddings = OpenAIEmbeddings(
     openai_api_key = st.secrets["OPENAI_API_KEY"],
-    base_url = st.secrets["BASE_URL"]
+    base_url = st.secrets["BASE_URL"],
+    model="text-embedding-3-small"
 )

@@ -14,7 +14,7 @@ st.set_page_config("Ben", page_icon=":movie_camera:")
 
 if "messages" not in st.session_state:
     st.session_state.messages = [
-        {"role": "assistant", "content": "你好，我是HTR-PM运行辅助智能体！ 有什么可以帮您？"},
+        {"role": "assistant", "content": "你好，我是HTR-PM运行征兆分析智能体！ 有什么可以帮您？"},
     ]
 
 # Submit handler
