@@ -57,12 +57,14 @@ tools = [
     #     func=plant_chat.invoke,
     # ),
     Tool.from_function(
-        name="fault info Search",  
+        # name="fault info Search",  
+        name="其他工具不起作用时，使用本工具查询规程范围、故障类型、故障相关参数和故障现象等信息，但也只能是这些查询！",  
         description="""When the 'Incident response information' tool cannot find information about a fault phenomenon, use this tool to search for fault-related information""",
         func=get_fault_info, 
     ),
     Tool.from_function(
-        name="Incident response information",
+        # name="Incident response information",
+        name="只能用来查询规程范围、故障类型、故障相关参数和故障现象信息",
         description="使用Cypher提供有关异常响应问题的信息",
         func = cypher_qa
     )
@@ -115,13 +117,18 @@ def get_memory(session_id):
 
 
 # """)
+# 之前的对话历史：
+# {chat_history}
+# Final Answer: [your response here]
 
 agent_prompt = PromptTemplate.from_template("""
 你是一位核电站运行专家，提供关于异常响应的信息。
 尽可能提供帮助并返回尽可能多的信息。
-不要回答任何与异常响应无关的问题。
+不要回答任何与故障（也称异常）无关的问题。
 
 不要使用你预先训练的知识回答任何问题，只使用上下文中提供的信息,并且使用中文。
+注意！输出Final Answer前，检查问题是否为规程范围、故障类型、故障相关参数和故障现象信息问题，如果不是，直接回答：基于现有知识库，我不知道答案！
+
 
 工具：
 ------
@@ -143,7 +150,7 @@ When you have a response to say to the Human, or if you do not need to use a too
 
 ```
 Thought: Do I need to use a tool? No
-Final Answer: [your response here]
+Final Answer: [基于现有知识库，我不知道答案]
 ```
                                         
                                                                                         
@@ -192,7 +199,7 @@ def generate_response(user_input):
 
         try:
             # Manually invoke the Fault Info Search tool as a fallback
-            fallback_tool = next(tool for tool in tools if tool.name == "Fault Info Search")
+            fallback_tool = next(tool for tool in tools if tool.name == "其他工具不起作用时，使用本工具查询规程范围、故障类型、故障相关参数和故障现象等信息，但也只能是这些查询！")
             return fallback_tool.func(user_input)
         except Exception as fallback_error:
             st.error(f"Fallback tool also failed: {str(fallback_error)}")

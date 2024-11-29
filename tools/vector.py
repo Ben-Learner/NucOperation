@@ -19,7 +19,8 @@ from langchain_core.prompts import ChatPromptTemplate
 neo4jvector = Neo4jVector.from_existing_index(
     embeddings,                              # <1>
     graph=graph,                             # <2>
-    index_name="faultinfo",                 # <3>
+    # index_name="faultinfo",                 # <3>
+    index_name="moviePlots",                 # <3>
     node_label="Information",                      # <4>
     text_node_property="name",               # <5>
     embedding_node_property="Embedding", # <6>

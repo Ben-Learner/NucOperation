@@ -41,7 +41,7 @@ for message in st.session_state.messages:
     write_message(message['role'], message['content'], save=False)
 
 # Handle any user input
-if question := st.chat_input("What is up?"):
+if question := st.chat_input("有什么问题吗?"):
     # Display user message in chat message container
     write_message('user', question)
 
