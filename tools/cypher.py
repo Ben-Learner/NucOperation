@@ -58,11 +58,18 @@ RETURN param.name AS Parameter, r.phenomenon AS Phenomenon;
 
 如果查询的是现象可能是什么故障，可以参考以下例子：
 
-问题：
+问题1：
 '给水流量异常可能是什么故障'
 
-Cypher查询:
+Cypher查询1:
 MATCH (p:Parameter{{name: '给水流量'}})<-[:HAS_PARAMETER]-(f:Fault)
+RETURN f.name AS Fault;
+
+问题2：
+'7.5m一回路仪表间γ剂量率异常上升可能是什么异常'
+
+Cypher查询2:
+MATCH (p:Parameter{{name: '7.5m一回路仪表间γ剂量率'}})<-[:HAS_PARAMETER]-(f:Fault)
 RETURN f.name AS Fault;
 
 模式：
