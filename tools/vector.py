@@ -43,10 +43,15 @@ retriever = neo4jvector.as_retriever()
 # end::retriever[]
 
 # tag::prompt[]
+# instructions = (
+#     "You should answer the question totally from the given context."
+#     "If you don't know the answer, say you don't know."
+#     "Context: {context}"
+# )
 instructions = (
-    "You should answer the question totally from the given context."
-    "If you don't know the answer, say you don't know."
-    "Context: {context}"
+    "你应该完全依据给定的上下文来回答问题"
+    "如果你不知道答案，就说你不知道。"
+    "上下文: {context}"
 )
 
 prompt = ChatPromptTemplate.from_messages(

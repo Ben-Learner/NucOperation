@@ -130,7 +130,7 @@ agent_prompt = PromptTemplate.from_template("""
 工具：
 ------
 
-你可以使用以下工具：
+你需要使用以下工具，当一个工具不起作用时，就启用另一个工具：
 
 {tools}
 
