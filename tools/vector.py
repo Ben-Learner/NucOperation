@@ -49,8 +49,7 @@ retriever = neo4jvector.as_retriever()
 #     "Context: {context}"
 # )
 instructions = (
-    "你应该完全依据给定的上下文来回答问题"
-    "如果你不知道答案，就说你不知道。"
+    "你应该完全依据给定的上下文来回答问题,检索得到的上下文信息也需要去除不必要的结果"
     "上下文: {context}"
 )
 
